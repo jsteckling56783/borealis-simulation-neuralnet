@@ -98,10 +98,11 @@ def autoencoder(pics):
 	aut.add(Conv2D(64, kernel_size=(5, 5), activation='relu', padding='same'))
 	aut.add(MaxPooling2D(pool_size=(2, 2), padding='same')) #3, 10, 64
 	#aut.add(Flatten()) #stacks nodes an Nx1 dim fully connected layer # was 2560
-	#aut.add(Dense(20, activation='relu')) 	#basic nn layer (needs flatten first)
+	aut.add(Dense(20, activation='relu')) 	#basic nn layer (needs flatten first)
 	#aut.add(Dropout(0.2))	#randomly drops proportions of dense nodes to avoid overfitting
 
 	#decoder
+	aut.add(Dense(64, activation='relu'))
 	aut.add(UpSampling2D(size=(2, 2)))
 	aut.add(Conv2D(64, kernel_size=(5, 5), activation='relu', padding='same'))
 	aut.add(UpSampling2D(size=(2, 2)))
@@ -113,17 +114,24 @@ def autoencoder(pics):
 	after = aut(pics)
 	return after
 
-npPics = getData(100)
+sampleSize = 100
+testSampSize = sampleSize * 4 // 5
+npPics = getData(sampleSize)
+npPics = npPics / 255
+np.random.shuffle(npPics)
+npTrain = npPics[:testSampSize]
+npTest = npPics[testSampSize:]
+
 #show(npPics, 7)
-print('X_data shape:', npPics.shape)
-pics = tf.convert_to_tensor(npPics, np.float32)
+print('X_data shape:', npTrain.shape)
+pics = tf.convert_to_tensor(npTrain, np.float32)
 
 # encoded = getEnc()(pics)
 # decoded = getDec()(getEnc()(pics))
 # encodedNp = tfToNp(encoded)
 # decodedNp = tfToNp(decoded)
 
-print(pics.dtype)
+print("pics dtype", pics.dtype)
 
 
 pls = autoencoder(pics)
@@ -133,10 +141,17 @@ autoencoder.compile(loss='mean_squared_error', optimizer = RMSprop())
 autoencoder.summary()
 
 
+# print(type(x_train))
+# print(x_train)
+# print("shape", x_train.shape)
+# print("max", np.max(pics))
+# print("type", type(x_train))
+# print("type", x_train.dtype)
 
-# train_data = pics / np.max(pics)
+# possibly use later
 # train_X,valid_X,train_ground,valid_ground = train_test_split(train_data,
 #                                                              train_data, 
 #                                                              test_size=0.2, 
 #                                                              random_state=13)
-# autoencoder_train = autoencoder.fit(train_X, train_ground, batch_size=20,epochs=2,verbose=1,validation_data=(valid_X, valid_ground), shuffle=True)
+
+autoencoder_train = autoencoder.fit(npTrain, npTrain, batch_size=20,epochs=2,verbose=1,validation_data=(npTest, npTest), shuffle=True)
