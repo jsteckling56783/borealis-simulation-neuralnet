@@ -172,6 +172,8 @@ def getSVDRankRApprox(x, rank):
 	print(sDA.shape)
 	print(vtA.shape)
 	x_approx = np.matmul(np.matmul(uA, sDA), vtA)  # flattened. exact, not approximation since all columns kept
+	np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent/pcaLaten100.csv", uA, delimiter=",")
+
 	return x_approx
 
 
