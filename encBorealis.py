@@ -117,20 +117,20 @@ def tfToNp(tensor):
 	return ret
 
 	#applies autoencoder to a tensor and retruens decoded version
-def firstautoencoder(pics):
+def autoencoder(pics):
 
 
 	#encoder
-	x = (Conv2D(16, kernel_size=(3, 3), activation='relu', padding='same'))(pics)
-	x = (MaxPooling2D(pool_size=(2, 2), padding='same'))(x)
-	x = (Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))(x)
+	x = (Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))(pics)
 	x = (MaxPooling2D(pool_size=(2, 2), padding='same'))(x)
 	x = (Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))(x)
+	x = (MaxPooling2D(pool_size=(2, 2), padding='same'))(x)
+	x = (Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))(x)
 	x = (MaxPooling2D(pool_size=(2, 2), padding='same'))(x)
 	#x = (Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))(x)
 	#x = (MaxPooling2D(pool_size=(2, 2), padding='same'))(x) #3, 10, 64
 	#x = Flatten()(x) #stacks nodes an Nx1 dim fully connected layer # was 2560
-	x = (Dense(32, activation='relu'))(x)	#basic nn layer (needs flatten first)
+	x = (Dense(16, activation='relu'))(x)	#basic nn layer (needs flatten first)
 	#aut.add(Dropout(0.2))	#randomly drops proportions of dense nodes to avoid overfitting
 
 	#decoder
@@ -139,15 +139,15 @@ def firstautoencoder(pics):
 	#x = (UpSampling2D(size=(2, 2)))(x)
 	#x = (Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))(x)
 	x = (UpSampling2D(size=(2, 2)))(x)
-	x = (Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))(x)
+	x = (Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))(x)
 	x = (UpSampling2D(size=(2, 2)))(x)
-	x = (Conv2D(16, kernel_size=(3, 3), activation='relu', padding='same'))(x)
+	x = (Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))(x)
 	x = (UpSampling2D(size=(2, 2)))(x)
 	x = (Conv2D(1, kernel_size=(3, 3), activation='relu', padding='same'))(x)
 	return x
 
 #applies autoencoder to a tensor and retruens decoded version
-def autoencoder(pics):
+def avgAutoencoder(pics):
 		#encoder
 	x = (Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))(pics)
 	x = (MaxPooling2D(pool_size=(2, 2), padding='same'))(x)
@@ -192,7 +192,7 @@ def makeAndTrain():
 	#                                                              random_state=13)
 
 	#get and prepare train and test data
-	sampleSize = 500
+	sampleSize = 1000
 	testSampSize = sampleSize * 4 // 5
 	npPics = getData(sampleSize)
 	npPics = npPics / 255
@@ -220,14 +220,10 @@ def makeAndTrain():
 	print('predicted size', after.shape)
 
 	print("=================")
-	print("    model info after training")
-	print(" 1 weights: ", autoenc.get_layer(index=1).get_weights())
 	print(" 1 weights: ", len(autoenc.get_layer(index=1).get_weights()))
 	print(" 1 weights: ", autoenc.get_layer(index=1).get_weights()[0].size)
-	print(" 3 weights: ", autoenc.get_layer(index=3).get_weights())
 	print(" 3 weights: ", len(autoenc.get_layer(index=3).get_weights()))
 	print(" 3 weights: ", autoenc.get_layer(index=3).get_weights()[0].size)
-	print(" 5 weights: ", autoenc.get_layer(index=5).get_weights())
 	print(" 5 weights: ", len(autoenc.get_layer(index=5).get_weights()))
 	print(" 5 weights: ", autoenc.get_layer(index=5).get_weights()[0].size)
 
@@ -242,9 +238,17 @@ def makeAndTrain():
 
 def saveLatent(model, data):
 	encoder = Sequential()
+	for i in range(1, 7):
+		encoder.add(model.get_layer(index=i))
+	encoder.add(Flatten())
+	latent = encoder.predict(data, verbose=1)
+	np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent/latent5.csv", latent, delimiter=",")
+
+def saveAveragedLatent(model, data):
+	encoder = Sequential()
 	for i in range(1, 10):
 		encoder.add(model.get_layer(index=i))
 	latent = encoder.predict(data, verbose=1)
-	np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent2.csv", latent, delimiter=",")
+	np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent/latent2.csv", latent, delimiter=",")
 
 makeAndTrain()
