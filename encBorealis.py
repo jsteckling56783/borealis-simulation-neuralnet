@@ -236,6 +236,7 @@ def makeAndTrain():
 
 #pls = autoencoder(pics)90
 
+
 def saveLatent(model, data):
 	encoder = Sequential()
 	for i in range(1, 7):
