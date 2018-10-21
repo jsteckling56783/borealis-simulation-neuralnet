@@ -9,7 +9,7 @@ from scipy.stats import norm
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 from matplotlib import pyplot as plt
-from matplotlib.widgets import Slider
+from matplotlib.widgets import Slider, Button
 import numpy as np
 import cv2
 import glob
@@ -120,30 +120,62 @@ def plot2Series(a, b):
 
 #maps a slider value [0, 1] to a value on the bell curve between -3 and 3 standard deviatons
 # -0.5 maps to 25th percentile, 0 to median, 0.5 to 75th percentile, ect.
-def linSliderToNormal(slider, mean, std):
+def linSliderToNormal(bellCurveInfo):
+	slider = bellCurveInfo[0]
+	mean = bellCurveInfo[1]
+	std = bellCurveInfo[2]
 
 	# set values ouside of the 2-98 percentile range to the respective edge of the range to prevent extreme image features in slider demo
-	slider = 0.01 if slider < 0.01 else (0.99)
+	slider = 0.01 if slider < 0.01 else (0.99 if slider > 0.99 else slider)
+	norm.ppf
 	return norm.ppf(slider, loc=mean, scale=std)
 
-
+def getImgFromLatent(normalizedVals, latentToDistr):
+	return (np.matmul(normalizedVals, latentToDistr)).reshape((HEIGHT, WIDTH))
 
 def runSliders(means, stds, latentToDistr):
 	dims = means.size
-	sliderVals = (np.ones_like(means))*0.5
+	sliderVals = (np.ones_like(means))*0.3
+															#todo: pass data without making so many copies
+	iterableDistr = np.column_stack((sliderVals, means, stds))
 
-	demoImg = (np.matmul(sliderVals, latentDistr)).reshape((HEIGHT, WIDTH))
+	normalizedVals = np.array(list(map(linSliderToNormal, iterableDistr)))
 
-	amp_slider_ax  = fig.add_axes([0.25, 0.15, 0.65, 0.03], axisbg=axis_color)
-	amp_slider = Slider(amp_slider_ax, 'Amp', 0.1, 10.0, valinit=amp_0)
+	demoImg = getImgFromLatent(normalizedVals, latentToDistr)
 
-	# Draw another slider
-	freq_slider_ax = fig.add_axes([0.25, 0.1, 0.65, 0.03], axisbg=axis_color)
-	freq_slider = Slider(freq_slider_ax, 'Freq', 0.1, 30.0, valinit=freq_0)
 
-	plt.figure()
-	plt.imshow(demoImg, cmap='Greens_r')
+	fig = plt.figure()
+	plt.axis('off')
+	fig.add_subplot(2, 1, 1)
+
+
+	plt.axis([0, 120, 0, 1])
+
+	f0=0.5
+	sliderax = plt.axes([0.25, 0.95, 0.1, 0.03], facecolor='lightgoldenrodyellow')
+	plt.axis('off')
+	slider = Slider(sliderax, 'Dim 1', 0, 1, valinit=f0)
+
+	resetax = plt.axes([0.8, 0.95, 0.1, 0.04])
+	button = Button(resetax, 'Reset', color='lightgoldenrodyellow', hovercolor='0.975')
+
+	#button.on_clicked(updateFromSliders)
+
+	# t = np.arange(0.0, 1.0, 0.001)
+	# amp_0 = 5
+	# freq_0 = 3
+
+	# amp_slider_ax  = fig.add_axes([0.25, 0.15, 0.65, 0.03], axisbg='lightgoldenrodyellow')
+	# amp_slider = Slider(amp_slider_ax, 'Amp', 0.1, 10.0, valinit=amp_0)
+
+	# # Draw another slider
+	# freq_slider_ax = fig.add_axes([0.25, 0.1, 0.65, 0.03], axisbg='lightgoldenrodyellow')
+	# freq_slider = Slider(freq_slider_ax, 'Freq', 0.1, 30.0, valinit=freq_0)
+
+	fig.add_subplot(2, 1, 2)
+	plt.imshow(demoImg, cmap='Greens_r', interpolation='nearest')
 	plt.show();
+
 
 
 
@@ -202,8 +234,6 @@ def getLatentDistribution(latent):
 	means = getColMeans(latent)
 	stds = getColStds(latent)
 	stats = np.column_stack((means, stds))
-	print("stats:", stats)
-	print("    stats shape:", stats.shape)
 	return stats
 
 
@@ -211,30 +241,38 @@ def getLatentDistribution(latent):
 #should work with form (count, height*width) tensor if using an image
 def getSVDRankRApprox(x, rank):
 
-	runTraining = True
+	runTraining = False
 
 	if runTraining:
+		print("about to train pca again")
 		(u, s, vt) = np.linalg.svd(x, full_matrices=True)
-		
+		uA = u[:, :rank]
+		sA = s[:rank]
+		sDA = np.diag(sA) 
+		vtA = vt[:rank]
+		print("    original svd shapes: ", u.shape, s.shape, "( -> square", vt.shape)
+		print("reduced rank svd shapes: ", uA.shape, sDA.shape, vtA.shape)
+		svtA = np.matmul(sDA, vtA)
+		np.savetxt("latent/120pca_uA.csv", uA, delimiter=",")
+		np.savetxt("latent/120pca_uAWeights.csv", weights, delimiter=",")
 
-	#else:
-	#	u = np.genfromtxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent/pcaLatent120.csv", delimiter=",")
 
-	uA = u[:, :rank]
-	#randomuA = np.random.uniform(low=-1, high=1, size=uA.size).reshape(uA.shape)
-	sA = s[:rank]
-	sDA = np.diag(sA)
-	#plotSingularValues(s)
-	vtA = vt[:rank]
-	print("    original svd shapes: ", u.shape, s.shape, "( -> square", vt.shape)
-	print("reduced rank svd shapes: ", uA.shape, sDA.shape, vtA.shape)
-	x_approx = np.matmul(np.matmul(uA, sDA), vtA)  # flattened. exact, not approximation since all columns kept
-	np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent/pcaLatent120.csv", uA, delimiter=",")
+	else:
+		print("reading pca output from training earlier")
+		uA = np.genfromtxt("latent/120pca_uA.csv", delimiter=",")
+		svtA = np.genfromtxt("latent/120pca_uAWeights.csv", delimiter=",")
+
+	print("read the files")
+	
+	#np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent/pcaLatent120.csv", uA, delimiter=",")
 	stats = getLatentDistribution(uA)
-	latentWeights = np.matmul(sDA, vtA)
+	latentWeights = svtA
 	#plotSimilarLatent(stats)
-	plot2Series(uA[:, 5], uA[:, 6])
-	runSliders(stats[0], stats[1], latentWeights)
+	#plot2Series(uA[:, 3], uA[:, 4])
+	runSliders(stats[:,0], stats[:,1], latentWeights)
+
+
+	x_approx = np.matmul(uA, svtA)
 
 	return x_approx
 
@@ -250,7 +288,7 @@ def pca():
 	print("approx did")
 	print("error rate: ", getLoss(x, pics))
 	xViz = x.reshape(n, h, w, 1)
-	showSome(picsViz, xViz)
+	#showSome(picsViz, xViz)
 
 	print("done")
 
