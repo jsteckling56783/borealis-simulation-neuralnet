@@ -5,7 +5,8 @@ Upon completion: generative video output using LTSM deep learning
 
 ### What is Principal Component Analysis (PCA)?
 PCA describes a dataset, often of images, using a set of common features called principal components. 
-For example, in faces this could include distance between eyes, mouth width, ect.
+For example, in images of faces this could include distance between eyes, mouth width, ect.
+
 In this dataset, features could express shapes of bursts of light in certain locations.
 Check out this visualization: https://youtu.be/4VAkrUNLKSo?t=187
 
