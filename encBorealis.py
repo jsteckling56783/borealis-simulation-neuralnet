@@ -224,6 +224,14 @@ def makeAndTrain():
 	print(" 1 weights: ", autoenc.get_layer(index=1).get_weights()[0].size)
 	print(" 3 weights: ", len(autoenc.get_layer(index=3).get_weights()))
 	print(" 3 weights: ", autoenc.get_layer(index=3).get_weights()[0].size)
+	print("    model info after training")
+	print(" 1 weights: ", autoenc.get_layer(index=1).get_weights())
+	print(" 1 weights: ", len(autoenc.get_layer(index=1).get_weights()))
+	print(" 1 weights: ", autoenc.get_layer(index=1).get_weights()[0].size)
+	print(" 3 weights: ", autoenc.get_layer(index=3).get_weights())
+	print(" 3 weights: ", len(autoenc.get_layer(index=3).get_weights()))
+	print(" 3 weights: ", autoenc.get_layer(index=3).get_weights()[0].size)
+	print(" 5 weights: ", autoenc.get_layer(index=5).get_weights())
 	print(" 5 weights: ", len(autoenc.get_layer(index=5).get_weights()))
 	print(" 5 weights: ", autoenc.get_layer(index=5).get_weights()[0].size)
 
@@ -251,5 +259,11 @@ def saveAveragedLatent(model, data):
 		encoder.add(model.get_layer(index=i))
 	latent = encoder.predict(data, verbose=1)
 	np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent/latent2.csv", latent, delimiter=",")
+def saveLatent(model, data):
+	encoder = Sequential()
+	for i in range(1, 10):
+		encoder.add(model.get_layer(index=i))
+	latent = encoder.predict(data, verbose=1)
+	np.savetxt("C:/Users/Jessie Steckling/Documents/Code/GitHub/borealis-simulation-neuralnet/latent2.csv", latent, delimiter=",")
 
 makeAndTrain()
