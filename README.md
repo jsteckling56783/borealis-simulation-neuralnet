@@ -2,7 +2,7 @@
 PCA of Aurora Borealis images for dimensionality reduction
 Upon completion: generative video output using LTSM deep learning
 
-## Principal Component Analysis of imgages:
+### Principal Component Analysis of images:
 
 ![PCA study of cumulative component importance](pcaDemo/pcaFeatures.png)
 ![Dimentionality reduction results: 10 dimensions](pcaDemo/10DimensionReduction.png]
