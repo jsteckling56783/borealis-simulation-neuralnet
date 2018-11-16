@@ -24,12 +24,18 @@ Check out this visualization: https://youtu.be/4VAkrUNLKSo?t=187
 For each principal component, generae a random number in the uniform distribution [0,1] and map it
 to the corresponding value along the trained normal distribution for that PC on the input data. 
 Note the flaw in this method: images hover around 1 similar image which represents the mean weights.
-This is a motivating factor to use LSTM 
+This is a motivating factor to use LSTM.
+
 ![Naive sequence generation step 0](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_0.png)
 ![Naive sequence generation step 1](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_1.png)
 ![Naive sequence generation step 2](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_2.png)
 ![Naive sequence generation step 3](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_3.png)
 ![Naive sequence generation step 4](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_4.png)
+![Naive sequence generation step 5](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_5.png)
+![Naive sequence generation step 6](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_6.png)
+![Naive sequence generation step 7](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_7.png)
+![Naive sequence generation step 8](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_8.png)
+![Naive sequence generation step 9](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_9.png)
 
 At each time step, move the latent value [0,1] by a slight, randomly generated amount. This causes it to move 
 slightly along the normal curve. Incorrectly colored images using a random vector of initial PCA weights instead of
@@ -40,3 +46,8 @@ a sample from the normal distrbution of that PC's weights from training.
 ![Naive sequence generation step 2](GeneratedImagesRandomDistrSequence/genSeqImgsLg_2.png)
 ![Naive sequence generation step 3](GeneratedImagesRandomDistrSequence/genSeqImgsLg_3.png)
 ![Naive sequence generation step 4](GeneratedImagesRandomDistrSequence/genSeqImgsLg_4.png)
+![Naive sequence generation step 5](GeneratedImagesRandomDistrSequence/genSeqImgsLg_5.png)
+![Naive sequence generation step 6](GeneratedImagesRandomDistrSequence/genSeqImgsLg_6.png)
+![Naive sequence generation step 7](GeneratedImagesRandomDistrSequence/genSeqImgsLg_7.png)
+![Naive sequence generation step 8](GeneratedImagesRandomDistrSequence/genSeqImgsLg_8.png)
+![Naive sequence generation step 9](GeneratedImagesRandomDistrSequence/genSeqImgsLg_9.png)
