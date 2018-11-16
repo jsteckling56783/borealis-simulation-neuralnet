@@ -49,7 +49,9 @@ This is a motivating factor to use LSTM.
 
 At each time step, move the latent value [0,1] by a slight, randomly generated amount. This causes it to move 
 slightly along the normal curve. Incorrectly colored images using a random vector of initial PCA weights instead of
-a sample from the normal distrbution of that PC's weights from training.
+a sample from the normal distrbution of that PC's weights from training. This means, the generated images
+are still created from a combination of each feature that is present in the training images, but
+features could be present at obscure strengths.
 
 ![Naive sequence generation, without respect to trained distribution of Principal Component weights step 0](GeneratedImagesRandomDistrSequence/genSeqImgsLg_0.png)
 ![Naive sequence generation step 1](GeneratedImagesRandomDistrSequence/genSeqImgsLg_1.png)
