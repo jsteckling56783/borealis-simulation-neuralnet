@@ -36,6 +36,16 @@ This is a motivating factor to use LSTM.
 ![Naive sequence generation step 7](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_7.png)
 ![Naive sequence generation step 8](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_8.png)
 ![Naive sequence generation step 9](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_9.png)
+![Naive sequence generation step 10](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_10.png)
+![Naive sequence generation step 11](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_11.png)
+![Naive sequence generation step 12](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_12.png)
+![Naive sequence generation step 13](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_13.png)
+![Naive sequence generation step 14](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_14.png)
+![Naive sequence generation step 15](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_15.png)
+![Naive sequence generation step 16](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_16.png)
+![Naive sequence generation step 17](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_17.png)
+![Naive sequence generation step 18](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_18.png)
+![Naive sequence generation step 19](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_19.png)
 
 At each time step, move the latent value [0,1] by a slight, randomly generated amount. This causes it to move 
 slightly along the normal curve. Incorrectly colored images using a random vector of initial PCA weights instead of
