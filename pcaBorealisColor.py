@@ -103,15 +103,17 @@ def showSome(beforePics, afterPics, title):
 	print()
 	print('============================')
 	print()
-	print("about to show pics")
-	print("beforePics[j] shape", beforePics[j].shape)
-	print("afterPics[j] shape", afterPics[j].shape)
-	print("beforePics[j] type", type(beforePics[j]))
-	print("afterPics[j] type", type(afterPics[j]))
-	print("beforePics[j] type", beforePics[j].dtype)
-	print("afterPics[j] type", afterPics[j].dtype)
-	print("some from before pics displaying now better", beforePics[j, 0:10:, 0])
-	print("some from after pics displaying jankly", afterPics[j, 0:10:, 0])
+	printTypeInfo = False
+	if printTypeInfo:
+		print("about to show pics")
+		print("beforePics[j] shape", beforePics[j].shape)
+		print("afterPics[j] shape", afterPics[j].shape)
+		print("beforePics[j] type", type(beforePics[j]))
+		print("afterPics[j] type", type(afterPics[j]))
+		print("beforePics[j] type", beforePics[j].dtype)
+		print("afterPics[j] type", afterPics[j].dtype)
+	print("some color vals from training", beforePics[j, 0:3:, 0])
+	print("some color vals from PCA regen", afterPics[j, 0:3, 0])
 	#afterPics /= 255
 	j = 100
 	for i in range(5):
@@ -134,15 +136,17 @@ def showSome(beforePics, afterPics, title):
 		plt.imshow(cv2.cvtColor(afterPics[j], cv2.COLOR_BGR2RGB))
 
 		j += interval
-	enlarged = plt.figure(figsize=[13, 5])
-	enlarged.add_subplot(2, 1, 2)
-	enlarged.add_subplot
-	plt.imshow(cv2.cvtColor(beforePics[j], cv2.COLOR_BGR2RGB), interpolation='bilinear')
+
+	showEnlarged = False
+	if showEnlarged:
+		enlarged = plt.figure(figsize=[13, 5])
+		enlarged.add_subplot(2, 1, 2)
+		plt.imshow(cv2.cvtColor(beforePics[j], cv2.COLOR_BGR2RGB), interpolation='bilinear')
 
 
-	enlarged.add_subplot(2, 1, 1)
-	plt.imshow(cv2.cvtColor(afterPics[j], cv2.COLOR_BGR2RGB), interpolation='bilinear')
-	plt.show()
+		enlarged.add_subplot(2, 1, 1)
+		plt.imshow(cv2.cvtColor(afterPics[j], cv2.COLOR_BGR2RGB), interpolation='bilinear')
+		plt.show()
 
 
 def printTf(tensor):
@@ -187,7 +191,6 @@ def getOutlierRemovedImage(img):
 
 def getImgFromLatent(normalizedVals, latentToDistr):
 	generatedImages = (np.matmul(normalizedVals, latentToDistr)).reshape((HEIGHT, WIDTH, 3))
-	print("generatedImages shape", generatedImages.shape)
 
 	generatedImages = generatedImages.astype(np.uint8)#since 0-255 color values must be integers to display
 	return generatedImages
@@ -231,9 +234,9 @@ def generateRandomStartImg(means, stds, latentToDistr):
 			img0 = getImgFromLatent(w0, latentToDistr)
 			#img0 = getOutlierRemovedImage(img0)
 
-			blueOutliers = img0[:, :, 0]> 200
+			blueOutliers = img0[:, :, 0]> 210
 			img0[blueOutliers, 0] = 1.0
-			greenOutliers = img0[:, :, 1]> 200
+			greenOutliers = img0[:, :, 1]> 210
 			img0[greenOutliers, 1] = 1.0
 			redOutliers= img0[:, :, 2]> 150
 			img0[redOutliers, 2] = 1.0
@@ -244,12 +247,13 @@ def generateRandomStartImg(means, stds, latentToDistr):
 			
 
 			show = (i%50==0)
+			show = False
 			if show:
 				fig = plt.figure(figsize=[8, 4])
 				fig.suptitle('Generated from random sampling sequence from PCA ' + str(i), fontsize=12)
 				plt.imshow(cv2.cvtColor(img0, cv2.COLOR_BGR2RGB), interpolation='nearest')
 
-			save = True
+			save = False
 			if save:
 				path = 'genSeqImgsOrd_' + str(i) + '.png'
 				#plt.imsave(path, cv2.cvtColor(img0, cv2.COLOR_BGR2RGB))
@@ -288,39 +292,13 @@ def runSliders(means, stds, latentToDistr):
 
 
 		demoImg = demoImg.astype(np.uint8)
-		print()
-		print('========================================================')
-		print()
-		print("demoimg shape: ", demoImg.shape)
-		print("some demoimg values: ", demoImg[0, 0])
+		#plt.imshow(cv2.cvtColor(demoImg, cv2.COLOR_BGR2RGB), interpolation='nearest')
 
-		plt.imshow(cv2.cvtColor(demoImg, cv2.COLOR_BGR2RGB), interpolation='nearest')
-
-
-	#f0=0.5
-	#sliderax = plt.axes([0.25, 0.95, 0.1, 0.03], facecolor='lightgoldenrodyellow')
-	#plt.axis('off')
-	#slider = Slider(sliderax, 'Dim 1', 0, 1, valinit=f0)
-
-	#resetax = plt.axes([0.8, 0.95, 0.1, 0.04])
-	#button = Button(resetax, 'Reset', color='lightgoldenrodyellow', hovercolor='0.975')
-
-	#button.on_clicked(updateFromSliders)
-
-	# t = np.arange(0.0, 1.0, 0.001)
-	# amp_0 = 5
-	# freq_0 = 3
-
-	# amp_slider_ax  = fig.add_axes([0.25, 0.15, 0.65, 0.03], axisbg='lightgoldenrodyellow')
-	# amp_slider = Slider(amp_slider_ax, 'Amp', 0.1, 10.0, valinit=amp_0)
-
-	# # Draw another slider
-	# freq_slider_ax = fig.add_axes([0.25, 0.1, 0.65, 0.03], axisbg='lightgoldenrodyellow')
-	# freq_slider = Slider(freq_slider_ax, 'Freq', 0.1, 30.0, valinit=freq_0)
-
-
-
-
+def makeLSTM(inputSeq):
+	print()
+	print('===================')
+	print()
+	print('your lstm training sequence is a ' , type(inputSeq) , inputSeq.dtype, inputSeq.shape)
 
 
 def plotSingularValues(s):
@@ -384,7 +362,7 @@ def getLatentDistribution(latent):
 	print()
 	print('========================================================')
 	print()
-	print("stats (mean, std):", stats)
+	print("some PCA weight stats (mean, std):", stats[0:3])
 	return stats
 
 
@@ -422,6 +400,8 @@ def getSVDRankRApprox(x, rank, runTraining):
 	latentWeights = svtA
 	#plotSimilarLatent(stats)
 	#plot2Series(uA[:, 3], uA[:, 4])
+	makeLSTM(uA)
+
 	runSliders(stats[:,0], stats[:,1], latentWeights)
 	
 	generateRandomStartImg(stats[:,0], stats[:,1], latentWeights)
@@ -443,11 +423,9 @@ def pca():
 	print("pics shape:", pics.shape)
 
 	x = getSVDRankRApprox(pics, 120, False)
-	print("type:", x.dtype)
 	#x = np.array(x, dtype=np.uint8)
 
-	print("approx did")
-	print("error rate: ", getLoss(x, pics))
+	print("PCA regenreation error rate: ", getLoss(x, pics))
 	xViz = x.reshape(n, h, w, 3)
 
 	

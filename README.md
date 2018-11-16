@@ -52,6 +52,7 @@ slightly along the normal curve. Incorrectly colored images using a random vecto
 a sample from the normal distrbution of that PC's weights from training. This means, the generated images
 are still created from a combination of each feature that is present in the training images, but
 features could be present at obscure strengths.
+I made this by accident but it serves as an interesting demo
 
 ![Naive sequence generation, without respect to trained distribution of Principal Component weights step 0](GeneratedImagesRandomDistrSequence/genSeqImgsLg_0.png)
 ![Naive sequence generation step 1](GeneratedImagesRandomDistrSequence/genSeqImgsLg_1.png)
