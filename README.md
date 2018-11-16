@@ -20,7 +20,7 @@ Check out this visualization: https://youtu.be/4VAkrUNLKSo?t=187
 
 
 
-#Naive sequence generation (resulting images in GeneratedImagesRandomDistrSequence):
+# Naive sequence generation (resulting images in GeneratedImagesRandomDistrSequence):
 For each principal component, generae a random number in the uniform distribution [0,1] and map it
 to the corresponding value along the trained normal distribution for that PC on the input data. 
 Note the flaw in this method: images hover around 1 similar image which represents the mean weights.
@@ -51,3 +51,18 @@ a sample from the normal distrbution of that PC's weights from training.
 ![Naive sequence generation step 7](GeneratedImagesRandomDistrSequence/genSeqImgsLg_7.png)
 ![Naive sequence generation step 8](GeneratedImagesRandomDistrSequence/genSeqImgsLg_8.png)
 ![Naive sequence generation step 9](GeneratedImagesRandomDistrSequence/genSeqImgsLg_9.png)
+
+The above examples have been color corrected for extreme color values that do not occur in
+the original set and manifest themselves as outliers (i.e. bright red). 
+These are the images without color correction
+
+![Naive sequence generation, without respect to trained distribution of Principal Component weights step 0](GeneratedImagesRandomDistrSequence/genSeqImgsLg_0.png)
+![Naive sequence generation step 1](GeneratedImagesRandomDistrSequence/genSeqImgs_1.png)
+![Naive sequence generation step 2](GeneratedImagesRandomDistrSequence/genSeqImgs_2.png)
+![Naive sequence generation step 3](GeneratedImagesRandomDistrSequence/genSeqImgs_3.png)
+![Naive sequence generation step 4](GeneratedImagesRandomDistrSequence/genSeqImgs_4.png)
+![Naive sequence generation step 5](GeneratedImagesRandomDistrSequence/genSeqImgs_5.png)
+![Naive sequence generation step 6](GeneratedImagesRandomDistrSequence/genSeqImgs_6.png)
+![Naive sequence generation step 7](GeneratedImagesRandomDistrSequence/genSeqImgs_7.png)
+![Naive sequence generation step 8](GeneratedImagesRandomDistrSequence/genSeqImgs_8.png)
+![Naive sequence generation step 9](GeneratedImagesRandomDistrSequence/genSeqImgs_9.png)
