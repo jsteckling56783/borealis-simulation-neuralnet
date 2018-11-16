@@ -56,7 +56,7 @@ The above examples have been color corrected for extreme color values that do no
 the original set and manifest themselves as outliers (i.e. bright red). 
 These are the images without color correction
 
-![Naive sequence generation, without respect to trained distribution of Principal Component weights step 0](GeneratedImagesRandomDistrSequence/genSeqImgsLg_0.png)
+![Naive sequence generation, without respect to trained distribution of Principal Component weights step 0](GeneratedImagesRandomDistrSequence/genSeqImgs_0.png)
 ![Naive sequence generation step 1](GeneratedImagesRandomDistrSequence/genSeqImgs_1.png)
 ![Naive sequence generation step 2](GeneratedImagesRandomDistrSequence/genSeqImgs_2.png)
 ![Naive sequence generation step 3](GeneratedImagesRandomDistrSequence/genSeqImgs_3.png)
