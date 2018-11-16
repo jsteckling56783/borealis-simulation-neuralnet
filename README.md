@@ -23,6 +23,8 @@ Check out this visualization: https://youtu.be/4VAkrUNLKSo?t=187
 #Naive sequence generation (resulting images in GeneratedImagesRandomDistrSequence):
 For each principal component, generae a random number in the uniform distribution [0,1] and map it
 to the corresponding value along the trained normal distribution for that PC on the input data. 
+Note the flaw in this method: images hover around 1 similar image which represents the mean weights.
+This is a motivating factor to use LSTM 
 ![Naive sequence generation step 0](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_0.png)
 ![Naive sequence generation step 1](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_1.png)
 ![Naive sequence generation step 2](GeneratedImagesRandomDistrSequence/genSeqImgsOrd_2.png)
