@@ -77,7 +77,6 @@ def showSome(beforePics, afterPics, title):
 	fig = plt.figure(figsize=[13, 5])
 	title += str(beforePics[0].shape) + ", " + str(type(beforePics[0])) + ", " + str(afterPics[0].shape) + ", " + str(type(afterPics[0]))
 	fig.suptitle(title, fontsize=11)
-	print("afterPics[j] type", afterPics[j].dtype)
 
 	
 	weirdly_high_red_indicies = afterPics[:, :, :, 2] > 150
@@ -180,17 +179,25 @@ def linSliderToNormal(bellCurveInfo):
 	norm.ppf
 	return norm.ppf(slider, loc=mean, scale=std)
 
-def getOutlierRemovedImage(img):
-	outlier_red_indicies = img[:, :, 2] > 130
-	outlier_green_indicies = img[:, :, 0] > 210
-	outlier_blue_indicies = img[:, :, 1] > 170
-	img[outlier_red_indicies, 2] = 1.0
-	img[outlier_green_indicies, 0] = 1.0
-	img[outlier_blue_indicies, 1] = 1.0
-	return img.astype(np.uint8)
-
 def getImgFromLatent(normalizedVals, latentToDistr):
 	generatedImages = (np.matmul(normalizedVals, latentToDistr)).reshape((HEIGHT, WIDTH, 3))
+	print()
+	print('-------------------------------------')
+	print()
+	print('finding the max val and checking if over 255 or not')
+	print(generatedImages.max())
+	print(generatedImages.min())
+	stopWrapArpound = lambda x: max(min(x, 255), 0)
+	for index, val in np.ndenumerate(generatedImages):
+		tmp = generatedImages[index]
+		generatedImages[index] = 0 if tmp < 0 else 255 if tmp > 255 else tmp
+
+
+	print(generatedImages.max())
+	print(generatedImages.min())
+	print()
+	print('-------------------------------------')
+	print()
 
 	generatedImages = generatedImages.astype(np.uint8)#since 0-255 color values must be integers to display
 	return generatedImages
@@ -209,12 +216,54 @@ def pickRandomNormal(meanStd):
 def pickRandom01Unif(ignore):
 	return np.random.uniform(low=0.0, high=1.0)
 
+
+def genFromPretendSliders(means, stds, latentToDistr):
+
+	#points in range [0, 1] for first 10 PCA
+	custom = np.array([[0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.1, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.9, 0.1, 0.9, 0.1, 0.9, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.9, 0.9, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.1, 0.1, 0.9, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.9, 0.1, 0.9, 0.1, 0.1],
+					   [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.9, 0.9, 0.1, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.9, 0.1, 0.1, 0.9, 0.9],
+					   [0.9, 0.9, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+					   [0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.9, 0.1, 0.1, 0.9, 0.1, 0.1],
+					   [0.2, 0.5, 0.9, 0.8, 0.5, 0.5, 0.1, 0.9, 0.1, 0.9, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.9]])
+	customRev = np.ones_like(custom) - custom
+	custom = np.concatenate((custom, customRev))
+	print(custom)
+
+
+	fig = plt.figure(figsize=[14, 5])
+	
+
+	for i in range(custom[:, 0].size):
+		unif = np.ones_like(means)/2
+		unif[0:20] = custom[i]
+		iterableDistrUnif = np.column_stack((unif, means, stds))
+		w0 = np.array(list(map(linSliderToNormal, iterableDistrUnif)))
+
+		img0 = getImgFromLatent(w0, latentToDistr)
+	
+		img0 = img0.astype(np.uint8)
+
+
+		fig = plt.figure(figsize=[8, 4])
+		fig.suptitle('first 20 PC percentiles ' + str(custom[i]), fontsize=12)
+		plt.imshow(cv2.cvtColor(img0, cv2.COLOR_BGR2RGB), interpolation='nearest')
+		savePath = 'sliderSimulation/sliderGenerated' + str(i)
+		plt.savefig(savePath)
+
+
 #randomly chooses values for each latent PCA weight following the normal distribution and transforms this vector into is corresponding image
 #TODO: might need bounds
 #inten
 def generateRandomStartImg(means, stds, latentToDistr):
 		
-		m = 1
+		m = 1 #multiplier on stds- increase to make more obscure images
 		iterableDistr = np.column_stack((means, stds * m))
 		u0 = np.ones_like(means)
 		linSliderToNormal
@@ -222,12 +271,7 @@ def generateRandomStartImg(means, stds, latentToDistr):
 		u0 = np.array(list(map(pickRandom01Unif, u0)))
 
 		for i in range(200):
-			#print("saving wiggled:", i)
-			#w0 = np.ones_like(means)
-			#w0 = stepForwardImgFromLatent(w0)
-			#w0 = np.array(list(map(pickRandomNormal, iterableDistr)))
-
-
+			
 			iterableDistrUnif = np.column_stack((u0, means, stds))
 			w0 = np.array(list(map(linSliderToNormal, iterableDistrUnif)))
 
@@ -243,8 +287,6 @@ def generateRandomStartImg(means, stds, latentToDistr):
 
 			img0 = img0.astype(np.uint8)
 
-
-			
 
 			show = (i%50==0)
 			show = False
@@ -282,23 +324,11 @@ def runSliders(means, stds, latentToDistr):
 		demoImg = getImgFromLatent(alteredMeans, latentToDistr)
 		fig = plt.figure(figsize=[5, 2])
 		fig.suptitle('This is regenerated from the average image', fontsize=12)
-		#plt.axis([0, 120, 0, 1])
-		blueOutliers = demoImg[:, :, 0]> 253
-		demoImg[blueOutliers, 0] = 1.0
-		greenOutliers = demoImg[:, :, 1]> 253
-		demoImg[greenOutliers, 1] = 1.0
-		redOutliers= demoImg[:, :, 2]> 150
-		demoImg[redOutliers, 2] = 1.0
+	
 
 
 		demoImg = demoImg.astype(np.uint8)
 		#plt.imshow(cv2.cvtColor(demoImg, cv2.COLOR_BGR2RGB), interpolation='nearest')
-
-def makeLSTM(inputSeq):
-	print()
-	print('===================')
-	print()
-	print('your lstm training sequence is a ' , type(inputSeq) , inputSeq.dtype, inputSeq.shape)
 
 
 def plotSingularValues(s):
@@ -400,11 +430,11 @@ def getSVDRankRApprox(x, rank, runTraining):
 	latentWeights = svtA
 	#plotSimilarLatent(stats)
 	#plot2Series(uA[:, 3], uA[:, 4])
-	makeLSTM(uA)
+	genFromPretendSliders(stats[:,0], stats[:,1], latentWeights)
 
-	runSliders(stats[:,0], stats[:,1], latentWeights)
+	#runSliders(stats[:,0], stats[:,1], latentWeights)
 	
-	generateRandomStartImg(stats[:,0], stats[:,1], latentWeights)
+	#generateRandomStartImg(stats[:,0], stats[:,1], latentWeights)
 	plt.show()
 
 
@@ -425,6 +455,9 @@ def pca():
 	x = getSVDRankRApprox(pics, 120, False)
 	#x = np.array(x, dtype=np.uint8)
 
+	print()
+	print('============================')
+	print()
 	print("PCA regenreation error rate: ", getLoss(x, pics))
 	xViz = x.reshape(n, h, w, 3)
 
